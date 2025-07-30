@@ -20,7 +20,17 @@ const ProviderForm: React.FC = forwardRef((props: { value: any }, ref) => {
   const [openaiServerType, setOpenaiServerType] = useState<string | null>();
   const [qwenServerType, setQwenServerType] = useState<string | null>();
   const [providerConfig, setProviderConfig] = useState<object | null>();
-  const formProviderType = Form.useWatch('type', form);
+
+  const resetForm = () => {
+    form.resetFields();
+    setFailoverEnabled(false);
+    setProviderType(null);
+    onProviderTypeChanged(null);
+    setProviderConfig(null);
+    setOpenaiServerType(null);
+    onOpenaiServerTypeChanged(null);
+    onQwenServerTypeChanged(null)
+  };
 
   useEffect(() => {
     form.resetFields();
@@ -97,16 +107,13 @@ const ProviderForm: React.FC = forwardRef((props: { value: any }, ref) => {
     }
 
     return () => {
-      setFailoverEnabled(false);
-      onProviderTypeChanged(null);
-      onOpenaiServerTypeChanged(null);
-      onQwenServerTypeChanged(null);
+      resetForm();
     }
   }, [props.value]);
 
   useImperativeHandle(ref, () => ({
     reset: () => {
-      form.resetFields();
+      resetForm();
     },
     handleSubmit: async () => {
       const values = await form.validateFields();
@@ -316,7 +323,7 @@ const ProviderForm: React.FC = forwardRef((props: { value: any }, ref) => {
       }
 
       {
-        formProviderType === 'openai' && (
+        providerType === 'openai' && (
           <>
             <Form.Item
               label={t('llmProvider.providerForm.label.openaiServerType')}
@@ -432,7 +439,7 @@ const ProviderForm: React.FC = forwardRef((props: { value: any }, ref) => {
       }
 
       {
-        formProviderType === 'qwen' && (
+        providerType === 'qwen' && (
           <>
             <Form.Item
               label={t('llmProvider.providerForm.label.qwenServerType')}
@@ -539,7 +546,7 @@ const ProviderForm: React.FC = forwardRef((props: { value: any }, ref) => {
       }
 
       {
-        formProviderType === 'azure' && (
+        providerType === 'azure' && (
           <>
             <Form.Item
               label={t('llmProvider.providerForm.label.azureServiceUrl')}
@@ -563,7 +570,7 @@ const ProviderForm: React.FC = forwardRef((props: { value: any }, ref) => {
       }
 
       {
-        formProviderType === 'ollama' && (
+        providerType === 'ollama' && (
           <>
             <Form.Item
               label={t('llmProvider.providerForm.label.ollamaServerHost')}
@@ -606,7 +613,7 @@ const ProviderForm: React.FC = forwardRef((props: { value: any }, ref) => {
       }
 
       {
-        formProviderType === 'bedrock' && (
+        providerType === 'bedrock' && (
           <>
             <Form.Item
               label={t('llmProvider.providerForm.label.awsRegion')}
@@ -666,7 +673,7 @@ const ProviderForm: React.FC = forwardRef((props: { value: any }, ref) => {
       }
 
       {
-        formProviderType === 'vertex' && (
+        providerType === 'vertex' && (
           <>
             <Form.Item
               label={t('llmProvider.providerForm.label.vertexRegion')}
