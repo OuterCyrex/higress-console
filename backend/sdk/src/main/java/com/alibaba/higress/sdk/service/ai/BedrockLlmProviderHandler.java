@@ -31,6 +31,7 @@ public class BedrockLlmProviderHandler extends AbstractLlmProviderHandler {
     private static final String AWS_REGION_KEY = "awsRegion";
 
     private static final String DOMAIN_FORMAT = "bedrock-runtime.%s.amazonaws.com";
+    private static final String BEDROCK_ADDITIONAL_FIELDS_KEY = "bedrockAdditionalFields";
 
     @Override
     public String getType() {
@@ -57,6 +58,22 @@ public class BedrockLlmProviderHandler extends AbstractLlmProviderHandler {
         if (StringUtils.isEmpty(secretKey)) {
             throw new ValidationException(AWS_SECRET_KEY_KEY + " cannot be empty.");
         }
+
+        Object rawBedrockAdditionalFields = configurations.get(BEDROCK_ADDITIONAL_FIELDS_KEY);
+        if (rawBedrockAdditionalFields != null) {
+            if (!(rawBedrockAdditionalFields instanceof Map)) {
+                throw new ValidationException(BEDROCK_ADDITIONAL_FIELDS_KEY + " must be an object.");
+            }
+            Map<?, ?> bedrockAdditionalFields = (Map<?, ?>) rawBedrockAdditionalFields;
+            for (Map.Entry<?, ?> entry : bedrockAdditionalFields.entrySet()) {
+                if (!(entry.getKey() instanceof String) || !(entry.getValue() instanceof String)) {
+                    throw new ValidationException(
+                            BEDROCK_ADDITIONAL_FIELDS_KEY + " must be an object with string key-value pairs."
+                    );
+                }
+            }
+        }
+
     }
 
     @Override
