@@ -1,3 +1,4 @@
+/* eslint-disable max-lines */
 import { OptionItem } from '@/interfaces/common';
 import { ProxyServer } from '@/interfaces/proxy-server';
 import { Service, serviceToString } from '@/interfaces/service';
@@ -843,6 +844,34 @@ const ProviderForm: React.FC = forwardRef((props: { value: any }, ref) => {
                 allowClear
                 maxLength={256}
               />
+            </Form.Item>
+            <Form.Item
+              label={t('llmProvider.providerForm.label.awsAdditionalFields')}
+            >
+              <Form.Item
+                name={["rawConfigs", "bedrockAdditionalFields"]}
+                noStyle
+                rules={[
+                  {
+                    validator(rule, value) {
+                      if (!value) {
+                        return
+                      }
+                      try {
+                        const authKeyObj = JSON.parse(value);
+                        if (typeof authKeyObj !== 'object') {
+                          return Promise.reject(t('llmProvider.providerForm.rules.awsAdditionalFieldsBadFormat'));
+                        }
+                        return Promise.resolve();
+                      } catch (e) {
+                        return Promise.reject(t('llmProvider.providerForm.rules.awsAdditionalFieldsBadFormat'));
+                      }
+                    },
+                  },
+                ]}
+              >
+                <TextArea rows={15} />
+              </Form.Item>
             </Form.Item>
           </>
         )
